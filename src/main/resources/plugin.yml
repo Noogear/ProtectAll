@@ -1,0 +1,5 @@
+name: protectall
+version: '1.0'
+main: me.pta.protectall
+api-version: '1.21'
+prefix: protectall
