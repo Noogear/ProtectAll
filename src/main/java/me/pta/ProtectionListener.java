@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.*;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
@@ -65,6 +66,14 @@ public class ProtectionListener implements Listener {
     @EventHandler
     public void onBlockFade(BlockFadeEvent event) {
         if(event.getBlock().getWorld().getName().equals(world)) {
+            event.setCancelled(true);
+        }
+    }
+
+    //方块间接被破坏(可能是用于铁砧的）
+    @EventHandler
+    public void onBlockDamage(BlockDamageEvent event) {
+        if (event.getBlock().getWorld().getName().equals(world)) {
             event.setCancelled(true);
         }
     }
@@ -195,6 +204,22 @@ public class ProtectionListener implements Listener {
             if (!(event.getEntity() instanceof Player) && (event.getMount().getType() == EntityType.BOAT || event.getMount().getType() == EntityType.MINECART)) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    //玩家能强制在床上睡觉，即使在末地和地狱
+    @EventHandler
+    public void onPlayerBedEnter(PlayerBedEnterEvent event) {
+        if (event.getPlayer().getWorld().getName().equals(world)) {
+            event.setUseBed(Result.ALLOW);
+        }
+    }
+
+    //禁止玩家修改告示牌
+    @EventHandler
+    public void onSignOpen(PlayerSignOpenEvent event) {
+        if (event.getPlayer().getWorld().getName().equals(world) && !event.getPlayer().hasPermission("protectall.op")) {
+            event.setCancelled(true);
         }
     }
 
